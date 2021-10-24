@@ -61,6 +61,45 @@ object List {
     case Cons(x, h) => Cons(x, init(h))
   }
 
+  def foldRight[A, B](as: List[A], z: B)(f: (A, B) => B): B = 
+    as match {
+      case Nil => z
+      case Cons(x, xs) => f(x, foldRight(xs, z)(f))
+    }
+
+  def foldLeft[A, B](as: List[A], z: B)(f: (B, A) => B): B =
+    as match {
+      case Nil => z
+      case Cons(x, xs) => foldLeft(xs, f(z, x))(f)
+    }
+
+  def reverseByFold[A](l: List[A]): List[A] =
+    foldLeft(l, List[A]() )((x: List[A], y: A) => Cons(y, x))
+
+  def leftSum(ns: List[Int]) =
+    foldLeft(ns, 0)(_ + _)
+  
+  def leftProduct(ns: List[Int]) =
+    foldLeft(ns, 0)(_ * _)
+
+  def leftLength(ns: List[Int]) = 
+    foldLeft(ns, 0)((x, y) => x + 1)
+
+  def sum2(ns: List[Int]) =
+    foldRight(ns, 0)((x, y) => x + y)
+
+  def product2(ns: List[Double]) =
+    foldRight(ns, 1.0)(_ * _)
+
+  def length[A](as: List[A]): Int =
+    foldRight(as, 0)((x, y) => 1 + y)
+
+  def appendByFoldRight[A](l: List[A], a: List[A]): List[A] =
+    foldRight(l, a)((x, y) => Cons(x, y))
+
+  def flatConcat[A](l: List[List[A]]): List[A] =
+    foldLeft(l, List[A]())(append)
+
 }
 
 val x = List(1,2,3,4,5) match {
@@ -71,8 +110,20 @@ val x = List(1,2,3,4,5) match {
   case _ => 101
 }
 
-// print(List.tail(List(1,2,3)))
-// print(List.setHead(0, List(1,2,3)))
-// print(List.drop(List(1,2,3), 2))
-// print(List.dropWhile(List(1,2,3,6,7,8,8,110), (a: Int) => a < 6))
-print(List.init(List(1,2,3,6,7,8,8,110,999)))
+// println(List.tail(List(1,2,3)))
+// println(List.setHead(0, List(1,2,3)))
+// println(List.drop(List(1,2,3), 2))
+// println(List.dropWhile(List(1,2,3,6,7,8,8,110), (a: Int) => a < 6))
+// println(List.init(List(1,2,3,6,7,8,8,110,999)))
+// println(List.sum2(List(1,2,3,6,7,8,8,110,999)))
+// println(List.product2(List(1,2,0,3))) // 당연히 멈추지 않는다 평가가 이루어지기전에 콜스택 끝에 다달아야 하기 때문이다
+
+// println(List.foldRight(List(1,2,3), Nil: List[Int])(Cons(_, _)))
+// println(List.foldLeft(List(1,2,3), 0)( _ + _ ))
+// println(List.length(List(1,2,0,3)))
+// println(List.leftLength(List(1,2,0,3)))
+// println(List.leftSum(List(1,2,0,3)))
+// println(List.leftProduct(List(1,2,0,3)))
+// println(List.reverseByFold(List(1,2,0,3)))
+// println(List.appendByFoldRight(List(1,2,3), List(4)))
+println(List.flatConcat(List(List(1,2,3), List(33,5,6,7))))
