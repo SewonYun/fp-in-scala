@@ -29,6 +29,38 @@ object List {
     case Cons(x, xs) => xs
   }
 
+  def setHead[A](v: A, l: List[A]): List[A] = (v, l) match {
+    case (Nil, l) => l
+    case (v, Nil) => List(v)
+    case _ => Cons(v, l)
+  }
+
+  def drop[A](l: List[A], n: Int): List[A] = 
+    if( n <= 0) l
+    else (l, n) match {
+      case (Nil, _) => Nil
+      case (Cons(x, xs), n) => {
+        if(n == 0) Cons(x, xs)
+        drop(xs, n-1)
+      }
+    }
+
+  def dropWhile[A] (l: List[A], f: A => Boolean): List[A] = l match {
+    case Cons(x, xs) if(f(x)) => dropWhile(xs, f) 
+    case _ => l
+  }
+
+  def append[A](a1: List[A], a2: List[A]): List[A] = a1 match {
+    case Nil => a2
+    case Cons(h, t) => Cons(h, append(t, a2))
+  }
+
+  def init[A](l: List[A]): List[A] = l match {
+    case Nil => Nil
+    case Cons(x, Nil) => Nil 
+    case Cons(x, h) => Cons(x, init(h))
+  }
+
 }
 
 val x = List(1,2,3,4,5) match {
@@ -39,4 +71,8 @@ val x = List(1,2,3,4,5) match {
   case _ => 101
 }
 
-print(List.tail(List(1,2,3)))
+// print(List.tail(List(1,2,3)))
+// print(List.setHead(0, List(1,2,3)))
+// print(List.drop(List(1,2,3), 2))
+// print(List.dropWhile(List(1,2,3,6,7,8,8,110), (a: Int) => a < 6))
+print(List.init(List(1,2,3,6,7,8,8,110,999)))
