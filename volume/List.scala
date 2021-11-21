@@ -64,7 +64,10 @@ object List {
   def foldRight[A, B](as: List[A], z: B)(f: (A, B) => B): B = 
     as match {
       case Nil => z
-      case Cons(x, xs) => f(x, foldRight(xs, z)(f))
+      case Cons(x, xs) => {
+        println(x, z)
+        f(x, foldRight(xs, z)(f))
+      }
     }
 
   def foldLeft[A, B](as: List[A], z: B)(f: (B, A) => B): B =
@@ -100,6 +103,54 @@ object List {
   def flatConcat[A](l: List[List[A]]): List[A] =
     foldLeft(l, List[A]())(append)
 
+  def plusOneMap(l: List[Int]): List[Int] =
+    foldRight(l, Nil: List[Int])((x, xs) => Cons(x+1, xs))
+
+  def echoDoubleNum(l: List[Double]): List[String] =
+    foldRight(l, Nil: List[String])((x, xs) => Cons(x.toString, xs))
+
+  def map[A,B](l: List[A])(f: A => B): List[B] = l match {
+    case Nil => Nil
+    case Cons(x, xs) => Cons(f(x), map(xs)(f))
+  }
+
+  def filter[A](as: List[A])(f: A => Boolean): List[A] = as match {
+    case Nil => Nil
+    case Cons(x, xs) => {
+      if(f(x)) Cons(x, filter(xs)(f))
+      else filter(xs)(f)
+    }
+  }
+
+  def flatMap[A, B](as: List[A])(f: A => List[B]): List[B] = as match {
+    case Nil => Nil
+    case Cons(x, xs) => {
+      val b = f(x)
+      append(b, flatMap(xs)(f))
+    }
+  }
+
+  def filterByFlatMap[A](as: List[A])(f: A => Boolean): List[A] = as match {
+    case Nil => Nil
+    case Cons(x, xs) => {
+      if(f(x)) flatMap(xs)(i => List(i))
+      else xs
+    }
+  }
+
+  def sumPairIndex(l: List[Int], p: List[Int]): List[Int] = (l, p) match {
+    case (Nil, _) =>Nil
+    case (_, Nil) =>Nil
+    case (Cons(l1, l2), Cons(p1, p2)) => Cons(l1 + p1, sumPairIndex(l2, p2))
+  }
+
+
+  def zipWith[A,B,C](l: List[A], p: List[B])(f: (A, B) => C): List[C] = (l, p) match {
+    case (Nil, _) =>Nil
+    case (_, Nil) =>Nil
+    case (Cons(l1, l2), Cons(p1, p2)) => Cons(f(l1, p1), zipWith(l2, p2)(f))
+  }
+
 }
 
 val x = List(1,2,3,4,5) match {
@@ -126,4 +177,12 @@ val x = List(1,2,3,4,5) match {
 // println(List.leftProduct(List(1,2,0,3)))
 // println(List.reverseByFold(List(1,2,0,3)))
 // println(List.appendByFoldRight(List(1,2,3), List(4)))
-println(List.flatConcat(List(List(1,2,3), List(33,5,6,7))))
+// println(List.flatConcat(List(List(1,2,3), List(33,5,6,7))))
+// println(List.plusOneMap(List(1,2,3)))
+// println(List.echoDoubleNum(List(1,2,3)))
+// println(List.map(List(1,2,3))((x: Int) => x * 10))
+// println(List.filter(List(1,33,22,3,89))((x: Int) => x > 10))
+// println(List.flatMap(List(1,2,3))(i => List(i, i)))
+// println(List.filterByFlatMap(List(1,2,3))(x => x > 1))
+// println(List.sumPairIndex(List(1,2,3) , List(2,3,4)))
+println(List.zipWith(List(1,2,3) , List(2,3,4))((a, b) => a * b))
