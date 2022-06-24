@@ -155,19 +155,19 @@ object List {
       case (Cons(l1, l2), Cons(p1, p2)) => Cons(f(l1, p1), zipWith(l2, p2)(f))
     }
 
-  def last[A](as: List[A]):A = as match {
+  def last[A](as: List[A]): A = as match {
     case Cons(x, Nil) => x
     case Cons(x, xs)  => last(xs)
-    case _ => throw new Exception("no search value");
+    case _            => throw new Exception("no search value");
   }
 
   def first[A](as: List[A]): A = as match {
     case Cons(x, xs) => x
-    case _ => throw new Exception("no search value");
+    case _           => throw new Exception("no search value");
   }
 
-  def hasSubsequence(sup: List[Int], sub: List[Int]):Boolean = {
-    if((first(sup) <= first(sub)) && (last(sup) >= last(sub))) {
+  def hasSubsequence(sup: List[Int], sub: List[Int]): Boolean = {
+    if ((first(sup) <= first(sub)) && (last(sup) >= last(sub))) {
       true
     } else {
       false
@@ -211,4 +211,4 @@ object List {
 // println(List.zipWith(List(1,2,3) , List(2,3,4))((a, b) => a * b))
 // println(List.last(List(1,2,3)))
 // println(List.first(List(1,2,3)))
-println(List.hasSubsequence(List(1,2,3), List(2,3,4)))
+// println(List.hasSubsequence(List(1,2,3), List(2,3,4)))
