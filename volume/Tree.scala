@@ -29,11 +29,12 @@ object Tree {
     case Branch(left, right) => Branch(map(left, f), map(right, f))
   }
 
-  def fold[A, B, C](t: Tree[A], acc: B)(f: (A, B) => C): C = t match {
-    case Leaf(v)      => Leaf(f(acc, v))
-    case Branch(l, _) => fold(l, acc)
-    case Branch(_, r) => fold(r, acc)
-  }
+  def fold[A, B](t: Tree[A], z: B)(branchF: (B, B) => B)(leafF: A => B): B =
+    t match {
+      case Leaf(value) => leafF(value)
+      case Branch(left, right) =>
+        branchF(fold(left, z)(branchF)(leafF), fold(right, z)(branchF)(leafF))
+    }
 
 }
 
@@ -42,3 +43,6 @@ object Tree {
 // println(Tree.depth(Tree.dummy))
 // println(Tree.map(Tree.dummy, (x: Int) => x.toString))
 // println(Tree.map(Tree.dummy, (x: Int) => x*10))
+// println(Tree.fold(Tree.dummy, 0)((l: Int, r: Int) => l max r)((x: Int) => x))
+// println(Tree.fold(Tree.dummy, 0)((l: Int, r: Int) => l + r)((x: Int) => x))
+// println(Tree.fold(Tree.dummy, 0)((l: Int, r: Int) => (l - r))((x: Int) => if(x <= 0) 1 else x))
